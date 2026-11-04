@@ -21,11 +21,14 @@ model User {
   passwordHash    String
   name            String?
   defaultCurrency String     @default("USD")
+  // monthly limit across all expenses; null means not set
+  overallBudget   Decimal?   @db.Decimal(12, 2)
   createdAt       DateTime   @default(now())
   updatedAt       DateTime   @updatedAt
   categories      Category[]
   expenses        Expense[]
   incomes         Income[]
+  budgets         Budget[]
 }
 
 model Category {
@@ -37,8 +40,22 @@ model Category {
   user      User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime  @default(now())
   expenses  Expense[]
+  budgets   Budget[]
 
   @@unique([userId, name])
+}
+
+model Budget {
+  id         String   @id @default(uuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  amount     Decimal  @db.Decimal(12, 2)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([userId, categoryId])
 }
 
 model Expense {

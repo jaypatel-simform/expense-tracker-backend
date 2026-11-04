@@ -74,6 +74,10 @@ All routes are prefixed with `/api`. Everything except signup and login requires
 | `GET/PATCH/DELETE /expenses/:id`       | Read / update / delete one expense                                    |
 | `GET/POST /income`                     | List / create. Create body: `amount`, `date`, `source?`, `note?`      |
 | `GET/PATCH/DELETE /income/:id`         | Read / update / delete one income entry                               |
+| `GET /budgets`                         | Your category budgets: `[{ id, categoryId, name, amount }]`           |
+| `PUT/DELETE /budgets/:categoryId`      | Set (upsert) or remove a category's recurring monthly limit. Body: `amount`. 404 if the category is not visible to you. DELETE returns 204 |
+| `PUT/DELETE /budgets/overall`          | Set or clear the overall monthly limit. Body: `amount`. DELETE returns 204 |
+| `GET /budgets/status?month=YYYY-MM`    | `{ month, overall, categories }`; `overall` is `null` when unset, and each line is `{ limit, spent, remaining, percentUsed }`. `categories` lists every budgeted category, including those with no spend. Overall `spent` counts all expenses |
 | `GET /dashboard/summary?month=YYYY-MM` | `{ month, spent, income, balance }` (balance = income - spent)        |
 | `GET /dashboard/by-category?month=YYYY-MM` | `[{ categoryId, name, total, percentage }]`                       |
 | `GET /dashboard/trend?months=6&to=YYYY-MM` | `[{ month, spent, income }]`, zero-filled, oldest first           |
@@ -81,7 +85,7 @@ All routes are prefixed with `/api`. Everything except signup and login requires
 
 List endpoints (`/expenses`, `/income`) accept `page` (default 1), `limit` (default 20, max 100), `from` and `to` (ISO dates; a date-only `to` includes that whole day). `/expenses` also accepts `categoryId` and `search` (case-insensitive match on the note). They return `{ data, meta: { page, limit, total, totalPages } }`, newest first.
 
-`month` defaults to the current month. Months are bucketed in UTC. Monetary amounts are returned as JSON numbers.
+`month` defaults to the current month. Months are bucketed in UTC. Monetary amounts are returned as JSON numbers. Budgets are recurring (one limit per category, applied to every month) and use the user's default currency.
 
 ### Logout
 
@@ -95,6 +99,7 @@ src/auth       signup/login/logout, JWT strategy, global auth guard, @Public()
 src/users      profile
 src/categories, src/expenses, src/income
 src/dashboard  aggregation endpoints
+src/budgets    monthly category and overall limits, usage status
 src/common     pagination, date range and month helpers
 ```
 

@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
+import { BudgetsModule } from './budgets/budgets.module';
 import { CategoriesModule } from './categories/categories.module';
 import { validateEnv } from './config/env.validation';
 import { DashboardModule } from './dashboard/dashboard.module';
@@ -19,6 +20,7 @@ import { UsersModule } from './users/users.module';
     ExpensesModule,
     IncomeModule,
     DashboardModule,
+    BudgetsModule,
   ],
 })
 export class AppModule {}

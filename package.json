@@ -1,6 +1,6 @@
 {
   "name": "expense-tracker-backend",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Expense Tracker API (NestJS + Prisma + PostgreSQL)",
   "private": true,
   "license": "UNLICENSED",
